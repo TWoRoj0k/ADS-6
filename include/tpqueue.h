@@ -1,6 +1,12 @@
-// Copyright 2022 NNTU-CS
+// Copyright 2025 NNTU-CS
 #ifndef INCLUDE_TPQUEUE_H_
 #define INCLUDE_TPQUEUE_H_
+
+// Структура SYM для использования в main.cpp
+struct SYM {
+    char ch;
+    int prior;
+};
 
 template<typename T>
 class TPQueue {
@@ -8,7 +14,7 @@ class TPQueue {
   struct Node {
     T data;
     Node* next;
-    Node(const T& value) : data(value), next(nullptr) {}
+    explicit Node(const T& value) : data(value), next(nullptr) {}
   };
 
   Node* head_;
@@ -24,11 +30,9 @@ class TPQueue {
     }
   }
 
-  // Добавление элемента в очередь с учётом приоритета
   void push(const T& item) {
     Node* newNode = new Node(item);
 
-    // Если очередь пуста
     if (isEmpty()) {
       head_ = newNode;
       tail_ = newNode;
@@ -36,7 +40,6 @@ class TPQueue {
       return;
     }
 
-    // Если приоритет нового элемента выше приоритета головы
     if (newNode->data.prior > head_->data.prior) {
       newNode->next = head_;
       head_ = newNode;
@@ -44,18 +47,15 @@ class TPQueue {
       return;
     }
 
-    // Поиск позиции для вставки
     Node* current = head_;
     while (current->next != nullptr &&
            current->next->data.prior >= newNode->data.prior) {
       current = current->next;
     }
 
-    // Вставка в найденную позицию
     newNode->next = current->next;
     current->next = newNode;
 
-    // Если вставили в конец, обновляем tail
     if (newNode->next == nullptr) {
       tail_ = newNode;
     }
@@ -63,7 +63,6 @@ class TPQueue {
     size_++;
   }
 
-  // Извлечение элемента из начала очереди (самый высокий приоритет)
   T pop() {
     if (isEmpty()) {
       return T();
@@ -73,7 +72,6 @@ class TPQueue {
     T result = head_->data;
     head_ = head_->next;
 
-    // Если очередь стала пустой, обновляем tail
     if (head_ == nullptr) {
       tail_ = nullptr;
     }
@@ -83,7 +81,6 @@ class TPQueue {
     return result;
   }
 
-  // Просмотр первого элемента без удаления
   T front() const {
     if (isEmpty()) {
       return T();
@@ -91,12 +88,10 @@ class TPQueue {
     return head_->data;
   }
 
-  // Проверка на пустоту
   bool isEmpty() const {
     return head_ == nullptr;
   }
 
-  // Текущий размер очереди
   int size() const {
     return size_;
   }
